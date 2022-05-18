@@ -5,12 +5,37 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 router.get('/', (req, res) => {
   // find all tags
-  // be sure to include its associated Product data
+  Tag.findAll({
+    // be sure to include its associated Product data
+    include: [{
+      model: Product,
+      through: ProductTag
+    }]
+  })
+  .then(tagData => res.json(tagData))
+  .catch(err => res.json(500).json(err));
 });
 
 router.get('/:id', (req, res) => {
   // find a single tag by its `id`
-  // be sure to include its associated Product data
+  Tag.findOne({
+    where: {
+      id: req.params.id
+    },
+    // be sure to include its associated Product data
+    include: [{
+      model: Product,
+      through: ProductTag
+    }]
+  })
+  .then(tag => {
+    if (!tag) {
+      res.status(404).json({ message: 'tag doesnt exist'});
+      return
+    }
+    res.json(tag);
+  })
+  .catch(err => res.status(500).json(err));
 });
 
 router.post('/', (req, res) => {
