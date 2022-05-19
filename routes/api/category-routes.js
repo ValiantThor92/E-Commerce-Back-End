@@ -41,10 +41,34 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
+  Category.update(req.body, {
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(updatedCategory => {
+    if (!updatedCategory) {
+      res.status(404).json({ message: 'No existing category'})
+    }
+    res.json(updatedCategory);
+  })
+  .catch(err => res.status(500).json(err))
 });
 
 router.delete('/:id', (req, res) => {
   // delete a category by its `id` value
+  Category.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(category => {
+    if (!category) {
+      res.status(404).json({ message: 'No existing category with this ID'})
+    }
+    res.json(category);
+  })
+  .catch(err => res.status(500).json(err))
 });
 
 module.exports = router;
